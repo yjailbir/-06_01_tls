@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Build Binary
+        run: make
+      - name: Simple Test
+        run: |
+          ./dummy-server.bin &
+          sleep 3
+          curl -s -k https://localhost:8443
+          kill $!
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: binary
+          path: ./dummy-server.bin
+
